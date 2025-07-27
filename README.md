@@ -9,8 +9,7 @@ A horrible interpreter for brainfuck written in Lua
 ```lua
 local brainfuck = require("brainfuck")
 local code = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
-local output = brainfuck.execute_string(code)
-print(output)  -- Output: Hello World!
+brainfuck.execute_string(code) -- output: Hello World!
 ```
 
 ## Methods:
