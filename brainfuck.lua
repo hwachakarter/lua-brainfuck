@@ -1,18 +1,14 @@
--- load dependencies
-local ascii = require('ascii')
-local rt = require('ready_table')
-
 local brainfuck = {}
 
 -- asks input from user
 -- returns 0 if invalid input
 local function ask_input()
     io.write('\n[brainfuck] input symbol: ')
-    local symbol = ascii.from_ascii(io.read())
+    local symbol = string.byte(io.read(), 1, 1)
     if symbol then
         return symbol
     else
-        return '0'
+        return 0
     end
 end
 
@@ -36,8 +32,8 @@ local function interpret(str, mode)
 
     local result_string = ''         -- string that will be returned if mode is 'str'
     local pointer = 1                -- poiner on data in stack
-    local stack = rt.create_array {} -- stack with values
-    local loops = rt.create_array {} -- array with loops
+    local stack = {} -- stack with values
+    local loops = {} -- array with loops
     local skipping = 0               -- skipping tells at what loop stack pos was skipping started
     local pos = 0                    -- starts at 1 because increases at the start
     repeat
@@ -67,9 +63,9 @@ local function interpret(str, mode)
             elseif symbol == '.' then
                 -- output
                 if mode == 'cli' then
-                    io.write(ascii.to_ascii(stack[pointer]))
+                    io.write(string.format("%c", stack[pointer]))
                 elseif mode == 'str' then
-                    result_string = result_string .. ascii.to_ascii(stack[pointer])
+                    result_string = result_string .. string.format("%c", stack[pointer])
                 end
             elseif symbol == ',' then
                 -- input
@@ -79,7 +75,7 @@ local function interpret(str, mode)
         -- loop check
         if symbol == '[' then
             -- add the start of the loop to the loops stack
-            loops:insert(pos)
+            table.insert(loops, pos)
             -- set skipping for this loop if empty and skipping didn't start earlier
             if (stack[pointer] == 0) and (skipping == 0) then
                 skipping = #loops
@@ -94,7 +90,7 @@ local function interpret(str, mode)
                     skipping = 0
                 end
                 -- remove loop because it ended
-                loops:remove(#loops)
+                table.remove(loops)
             end
         end
     until pos == #str
